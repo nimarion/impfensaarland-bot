@@ -1,10 +1,10 @@
 [![Build Status](https://github.com/nimarion/impfensaarland-bot/workflows/Build/badge.svg?branch=main)](https://github.com/nimarion/impfensaarland-bot/actions)
-[![GitHub contributors](https://img.shields.io/github/contributors/nimarion/impfensaarland-bot/.svg)](https://github.com/nimarion/impfensaarland-bot/graphs/contributors/)
+[![GitHub contributors](https://img.shields.io/github/contributors/nimarion/impfensaarland-bot.svg)](https://github.com/nimarion/impfensaarland-bot/graphs/contributors/)
 [![GitHub Repo stars](https://img.shields.io/github/stars/nimarion/impfensaarland-bot?style=social)](https://github.com/nimarion/impfensaarland-bot/stargazers)
 [![Selenium](https://img.shields.io/badge/Selenium-green.svg?style=flat&logo=Selenium&logoColor=white)](https://www.selenium.dev/)
 
 
-# ImpfeSaarland - Bot
+# ImpfenSaarland - Bot
 
 > Vor der Nutzung der Anwendung sollte man sich über das Impfportal zur Impfung registriert haben. Die Anwendung realisiert nur die Suche nach einem schnelleren Termin (1-7 Tage). Die Registrierung muss manuell über das Portal durchgeführt werden. 
 

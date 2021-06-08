@@ -38,6 +38,15 @@ public abstract class AbstractPage {
         return false;
     }
 
+    public boolean setLanguage(){
+        List<WebElement> list = findAll("//button[@type='button' and contains(., 'DE')]");
+        if (!list.isEmpty()) {
+            list.get(0).click();
+            return true;
+        }
+        return false;
+    }
+
     public boolean clickBack() {
         List<WebElement> list = findAll("//button[@type='submit' and contains(., 'Zurück')]");
         if (!list.isEmpty()) {

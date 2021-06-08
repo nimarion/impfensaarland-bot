@@ -9,12 +9,16 @@ public class Configuration {
 
     public static final String TELEGRAM_TOKEN;
     public static final String TELEGRAM_CHATID;
+    public static final String LOCATION;
+    public static final String REMOTE_GRID;
 
     static {
         final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
 
         TELEGRAM_CHATID = getenv("TELEGRAM_CHATID", dotenv);
         TELEGRAM_TOKEN = getenv("TELEGRAM_TOKEN", dotenv);
+        LOCATION = getenv("LOCATION", dotenv);
+        REMOTE_GRID = getenv("REMOTE_GRID", dotenv);
 
         try {
             checkNull();

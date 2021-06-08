@@ -2,6 +2,8 @@ package de.nmarion.impfbot;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +18,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,22 +36,18 @@ public class Main {
     private Telegram telegram;
 
     public Main(String... args) {
-        if (args.length < 1) {
-            throw new IllegalStateException("Missing location argument");
-        }
         if(Configuration.TELEGRAM_CHATID == null || Configuration.TELEGRAM_TOKEN == null){
             throw new IllegalStateException("Missing telegram configuration");
         }
         telegram = new Telegram(Configuration.TELEGRAM_TOKEN, Configuration.TELEGRAM_CHATID);
-        final String location = args[0].trim();
         webDriver = createWebDriver();
         webDriver.get("https://www.impfen-saarland.de/service/waitlist_entries");
-        while (!checkFreeSlots(location))
-            ;
+        while (!checkFreeSlots(Configuration.LOCATION));
     }
 
     private boolean checkFreeSlots(final String location) {
         final LocationPage locationPage = new LocationPage(webDriver);
+        locationPage.setLanguage();
         waitForLoading(locationPage);
         final WebElement locationButton = locationPage.getLocation(location);
         if (locationButton == null) {
@@ -116,11 +115,19 @@ public class Main {
     }
 
     private WebDriver createWebDriver() {
+        if(Configuration.REMOTE_GRID != null){
+            try {
+                return new RemoteWebDriver(new URL(Configuration.REMOTE_GRID), new ChromeOptions());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
         WebDriverManager.chromedriver().setup();
         var chromeOptions = new ChromeOptions();
         var chromeDriver = new ChromeDriver(chromeOptions);
         return chromeDriver;
     }
+    
 
     public static void main(String... args) {
         new Main(args);
