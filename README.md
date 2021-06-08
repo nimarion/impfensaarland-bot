@@ -9,7 +9,6 @@
 > Vor der Nutzung der Anwendung sollte man sich über das Impfportal zur Impfung registriert haben. Die Anwendung realisiert nur die Suche nach einem schnelleren Termin (1-7 Tage). Die Registrierung muss manuell über das Portal durchgeführt werden. 
 
 Ermöglicht das automatisierte Suchen nach kurzfristig freigewordenen Nachrückterminen auf dem [saarländischen Impfportal](https://www.impfen-saarland.de/). Das Programmt sucht an den möglichen Impfzentren nach freien Terminen und wählt diese sofort aus wenn ein neuer Termin freigeworden ist. Der Nutzer bekommt dann eine Benachrichtung per Telegram, über einen freien Termin.
-Im Schnitt benötigt die Anwendung 30 Minuten für einen freien Termin. Die Geschwindigkeit hängt jedoch von Wochentag und Tageszeit ab!
 
 ![Telegram](https://i.imgur.com/6EhRz0Q.png)
 

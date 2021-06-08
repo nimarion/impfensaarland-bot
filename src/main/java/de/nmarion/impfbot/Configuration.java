@@ -11,6 +11,7 @@ public class Configuration {
     public static final String TELEGRAM_CHATID;
     public static final String LOCATION;
     public static final String REMOTE_GRID;
+    public static final String DISCORD_URL;
 
     static {
         final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
@@ -19,6 +20,7 @@ public class Configuration {
         TELEGRAM_TOKEN = getenv("TELEGRAM_TOKEN", dotenv);
         LOCATION = getenv("LOCATION", dotenv);
         REMOTE_GRID = getenv("REMOTE_GRID", dotenv);
+        DISCORD_URL = getenv("DISCORD_URL", dotenv);
 
         try {
             checkNull();

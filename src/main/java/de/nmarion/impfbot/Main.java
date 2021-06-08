@@ -22,6 +22,9 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.nmarion.impfbot.alert.Alert;
+import de.nmarion.impfbot.alert.DiscordAlert;
+import de.nmarion.impfbot.alert.TelegramAlert;
 import de.nmarion.impfbot.page.AbstractPage;
 import de.nmarion.impfbot.page.CheckoutPage;
 import de.nmarion.impfbot.page.LocationPage;
@@ -33,16 +36,17 @@ public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     private final WebDriver webDriver;
-    private Telegram telegram;
+    private Alert alert;
 
     public Main(String... args) {
-        if(Configuration.TELEGRAM_CHATID == null || Configuration.TELEGRAM_TOKEN == null){
+        if (Configuration.TELEGRAM_CHATID == null || Configuration.TELEGRAM_TOKEN == null) {
             throw new IllegalStateException("Missing telegram configuration");
         }
-        telegram = new Telegram(Configuration.TELEGRAM_TOKEN, Configuration.TELEGRAM_CHATID);
+        alert = iniAlert();
         webDriver = createWebDriver();
         webDriver.get("https://www.impfen-saarland.de/service/waitlist_entries");
-        while (!checkFreeSlots(Configuration.LOCATION));
+        while (!checkFreeSlots(Configuration.LOCATION))
+            ;
     }
 
     private boolean checkFreeSlots(final String location) {
@@ -76,9 +80,9 @@ public class Main {
                 LOGGER.info("Fester Impftermin gefunden und ausgewählt");
                 WebElement mainContent = checkoutPage.getMainContent();
                 try {
-                    telegram.sendImage(takeScreenshot(mainContent), "Impftermin gefunden: \n" + name);
+                    alert.sendMessage("Impftermin gefunden: \n" + name, takeScreenshot(mainContent));
                 } catch (IOException e) {
-                    telegram.sendMessage("Impftermin gefunden: \n" + name);
+                    alert.sendMessage("Impftermin gefunden: \n" + name);
                     e.printStackTrace();
                 }
                 return true;
@@ -98,7 +102,7 @@ public class Main {
         }
     }
 
-    //https://stackoverflow.com/a/13834607
+    // https://stackoverflow.com/a/13834607
     private File takeScreenshot(final WebElement webElement) throws IOException {
         final File screenshot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.FILE);
         final BufferedImage fullImg;
@@ -115,7 +119,7 @@ public class Main {
     }
 
     private WebDriver createWebDriver() {
-        if(Configuration.REMOTE_GRID != null){
+        if (Configuration.REMOTE_GRID != null) {
             try {
                 return new RemoteWebDriver(new URL(Configuration.REMOTE_GRID), new ChromeOptions());
             } catch (MalformedURLException e) {
@@ -127,7 +131,16 @@ public class Main {
         var chromeDriver = new ChromeDriver(chromeOptions);
         return chromeDriver;
     }
-    
+
+    private Alert iniAlert() {
+        if (Configuration.TELEGRAM_CHATID != null && Configuration.TELEGRAM_TOKEN != null) {
+            return new TelegramAlert(Configuration.TELEGRAM_TOKEN, Configuration.TELEGRAM_CHATID);
+        }
+        if(Configuration.DISCORD_URL != null){
+            return new DiscordAlert(Configuration.DISCORD_URL);
+        }
+        throw new IllegalStateException();
+    }
 
     public static void main(String... args) {
         new Main(args);

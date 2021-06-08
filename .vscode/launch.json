@@ -6,7 +6,6 @@
             "name": "Run ImpfenSaarlandBot",
             "request": "launch",
             "mainClass": "de.nmarion.impfbot.Main",
-            "args": "Lebach",
             "projectName": "ImpfenSaarlandBot"
         }
     ]
