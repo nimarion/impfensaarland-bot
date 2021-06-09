@@ -65,6 +65,11 @@ public class Main {
         final List<WebElement> webElements = slotPage.getFreeSlots();
         if (!webElements.isEmpty()) {
             LOGGER.info(webElements.size() + " Termine gefunden...");
+            try {
+                alert.sendMessage("Termine gefunden:", takeScreenshot( checkoutPage.getMainContent()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             final String name = webElements.get(0).getText();
             LOGGER.info("Versuche " + name + " zu wählen");
             webElements.get(0).click();
@@ -78,9 +83,8 @@ public class Main {
             }
             if (checkoutPage.isDisplayed()) {
                 LOGGER.info("Fester Impftermin gefunden und ausgewählt");
-                WebElement mainContent = checkoutPage.getMainContent();
                 try {
-                    alert.sendMessage("Impftermin gefunden: \n" + name, takeScreenshot(mainContent));
+                    alert.sendMessage("Impftermin gefunden: \n" + name, takeScreenshot(checkoutPage.getMainContent()));
                 } catch (IOException e) {
                     alert.sendMessage("Impftermin gefunden: \n" + name);
                     e.printStackTrace();
@@ -119,24 +123,25 @@ public class Main {
     }
 
     private WebDriver createWebDriver() {
+        final String userAgent = RandomUserAgent.getRandomUserAgent();
+        final ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("user-agent=" + userAgent);
         if (Configuration.REMOTE_GRID != null) {
             try {
-                return new RemoteWebDriver(new URL(Configuration.REMOTE_GRID), new ChromeOptions());
+                return new RemoteWebDriver(new URL(Configuration.REMOTE_GRID), chromeOptions);
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
         }
         WebDriverManager.chromedriver().setup();
-        var chromeOptions = new ChromeOptions();
-        var chromeDriver = new ChromeDriver(chromeOptions);
-        return chromeDriver;
+        return new ChromeDriver(chromeOptions);
     }
 
     private Alert iniAlert() {
         if (Configuration.TELEGRAM_CHATID != null && Configuration.TELEGRAM_TOKEN != null) {
             return new TelegramAlert(Configuration.TELEGRAM_TOKEN, Configuration.TELEGRAM_CHATID);
         }
-        if(Configuration.DISCORD_URL != null){
+        if (Configuration.DISCORD_URL != null) {
             return new DiscordAlert(Configuration.DISCORD_URL);
         }
         throw new IllegalStateException();

@@ -1,11 +1,14 @@
 package de.nmarion.impfbot.page;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
+
+import de.nmarion.impfbot.Configuration;
 
 public abstract class AbstractPage {
 
@@ -20,25 +23,24 @@ public abstract class AbstractPage {
         return driver.findElements(By.xpath(xPath));
     }
 
-    public WebElement getMainContent(){
+    public WebElement getMainContent() {
         List<WebElement> list = findAll("//*[@id='logged-in-area']");
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             return list.get(0);
         }
         return null;
     }
 
-
     public boolean clickNext() {
         List<WebElement> list = findAll("//button[@type='submit' and contains(., 'Weiter')]");
         if (!list.isEmpty()) {
-            list.get(0).click();
+            clickElement(list.get(0));
             return true;
         }
         return false;
     }
 
-    public boolean setLanguage(){
+    public boolean setLanguage() {
         List<WebElement> list = findAll("//button[@type='button' and contains(., 'DE')]");
         if (!list.isEmpty()) {
             list.get(0).click();
@@ -50,19 +52,33 @@ public abstract class AbstractPage {
     public boolean clickBack() {
         List<WebElement> list = findAll("//button[@type='submit' and contains(., 'Zurück')]");
         if (!list.isEmpty()) {
-            list.get(0).click();
+            clickElement(list.get(0));
             return true;
         }
         return false;
     }
 
-    public boolean isLoading(){
+    public boolean isLoading() {
         return !findAll("//div[contains(@class, 'LoadingSpinner__Wrapper')]").isEmpty();
     }
 
-    public boolean isDisplayed(){
-        return false;
+    public void clickElement(final WebElement webElement) {
+        if (Configuration.DELAY != null && Configuration.DELAY.equalsIgnoreCase("true")) {
+            int minDelay = 350;
+            int minRange = 200;
+            int maxRange = 400;
+            try {
+                TimeUnit.MILLISECONDS
+                        .sleep(minDelay + (minRange + (int) (Math.random() * ((maxRange - minRange) + 1))));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        webElement.click();
     }
 
+    public boolean isDisplayed() {
+        return false;
+    }
 
 }

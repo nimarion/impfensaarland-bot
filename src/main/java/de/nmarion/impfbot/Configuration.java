@@ -12,6 +12,7 @@ public class Configuration {
     public static final String LOCATION;
     public static final String REMOTE_GRID;
     public static final String DISCORD_URL;
+    public static final String DELAY;
 
     static {
         final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
@@ -21,6 +22,7 @@ public class Configuration {
         LOCATION = getenv("LOCATION", dotenv);
         REMOTE_GRID = getenv("REMOTE_GRID", dotenv);
         DISCORD_URL = getenv("DISCORD_URL", dotenv);
+        DELAY = getenv("DELAY", dotenv);
 
         try {
             checkNull();
@@ -41,8 +43,8 @@ public class Configuration {
 
     private static void checkNull() throws IllegalAccessException {
         for (Field f : Configuration.class.getDeclaredFields()) {
-            LoggerFactory.getLogger(Configuration.class).debug(f.getName() + " environment variable "
-                    + (f.get(Configuration.class) == null ? "is null" : "has been loaded"));
+            LoggerFactory.getLogger(Configuration.class).info(f.getName() + " environment variable "
+                    + (f.get(Configuration.class) == null ? "is null" : "has been loaded: " + f.get(String.class)));
         }
     }
 
