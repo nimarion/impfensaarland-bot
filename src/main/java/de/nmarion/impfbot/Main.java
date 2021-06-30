@@ -66,13 +66,19 @@ public class Main {
         if (!webElements.isEmpty()) {
             LOGGER.info(webElements.size() + " Termine gefunden...");
             try {
-                alert.sendMessage("Termine gefunden:", takeScreenshot( checkoutPage.getMainContent()));
-            } catch (IOException e) {
+                alert.sendMessage("Termine gefunden:", takeScreenshot(checkoutPage.getMainContent()));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            final String name = webElements.get(0).getText();
+            final WebElement slot = webElements.get((webElements.size() / 2) + 1);
+            final String name = slot.getText();
             LOGGER.info("Versuche " + name + " zu wählen");
-            webElements.get(0).click();
+            slot.click();
+            try {
+                alert.sendMessage("Clicked", takeScreenshot(checkoutPage.getMainContent()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             slotPage.clickNext();
             waitForLoading(slotPage);
             // TODO: Strange page behaviour
@@ -81,11 +87,16 @@ public class Main {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            try {
+                alert.sendMessage("Danach", takeScreenshot(checkoutPage.getMainContent()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (checkoutPage.isDisplayed()) {
                 LOGGER.info("Fester Impftermin gefunden und ausgewählt");
                 try {
                     alert.sendMessage("Impftermin gefunden: \n" + name, takeScreenshot(checkoutPage.getMainContent()));
-                } catch (IOException e) {
+                } catch (Exception e) {
                     alert.sendMessage("Impftermin gefunden: \n" + name);
                     e.printStackTrace();
                 }
@@ -125,7 +136,10 @@ public class Main {
     private WebDriver createWebDriver() {
         final String userAgent = RandomUserAgent.getRandomUserAgent();
         final ChromeOptions chromeOptions = new ChromeOptions();
-        chromeOptions.addArguments("user-agent=" + userAgent);
+        chromeOptions.addArguments(
+                "user-agent=" + userAgent);
+        chromeOptions.addArguments("--disable-blink-features");
+        chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
         if (Configuration.REMOTE_GRID != null) {
             try {
                 return new RemoteWebDriver(new URL(Configuration.REMOTE_GRID), chromeOptions);
@@ -148,7 +162,11 @@ public class Main {
     }
 
     public static void main(String... args) {
-        new Main(args);
+        try {
+            new Main(args);
+        } catch (Exception ex) {
+            new TelegramAlert(Configuration.TELEGRAM_TOKEN, Configuration.TELEGRAM_CHATID).sendMessage(ex.getMessage());
+        }
     }
 
 }

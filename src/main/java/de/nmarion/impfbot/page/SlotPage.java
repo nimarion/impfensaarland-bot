@@ -24,7 +24,7 @@ public class SlotPage extends AbstractPage {
     }
 
     public List<WebElement> getFreeSlots() {
-        return findAll("//div[contains(@class, 'TimeSelectorButton')]");
+        return findAll("//div[contains(@class, 'TimeSelectorButton__SplitWrapper-sc')]");
     }
 
     @Override
